@@ -27,7 +27,7 @@ driver.switchTo().defaultContent();
 // Setup prefix field
 var prefix_field = By.id('prefix');
 driver.wait(until.elementLocated(prefix_field));
-driver.findElement(prefix_field).sendKeys("firefox_test");
+driver.findElement(prefix_field).sendKeys("noise_test_firefox");
 // Setup timeout field
 var timeout_field = By.id('timeout');
 driver.wait(until.elementLocated(timeout_field));
@@ -53,7 +53,7 @@ var calibrate_button = By.id('calibrate');
 driver.wait(until.elementLocated(calibrate_button));
 driver.findElement(calibrate_button).click();
 // Check calibration completes
-driver.wait(until.elementTextContains(driver.findElement(output_field), "Channel calibrated!"), 10000);
+driver.wait(until.elementTextContains(driver.findElement(output_field), "Channel calibrated!"), 60000);
 
 // Start reading
 var read_button = By.id('reading');
@@ -65,8 +65,8 @@ driver.switchTo().defaultContent();
 
 // Start reading
 var sos_button = By.id('sos');
-driver.wait(until.elementLocated(sos_button));
-driver.findElement(sos_button).click();
+//driver.wait(until.elementLocated(sos_button));
+//driver.findElement(sos_button).click();
 
 driver.findElement(By.css("body")).sendKeys(Key.CONTROL +"\t");
 driver.switchTo().defaultContent();
