@@ -2,7 +2,8 @@ var browser = 'firefox';
 var profiler_host = 'http://localhost:1987';
 var profiler_target = 'http://www.google.dk';
 
-var reading_time = 6;
+var reading_time = 10;
+var ramp_time = 3;
 
 var filename = "_google";
 
@@ -75,10 +76,7 @@ var driverTarget = new webdriver.Builder()
 
 // Setup
 driverMain.get(profiler_host);
-driverTarget.get();
-
-
-driverMain.findElement(By.css("body")).sendKeys(Key.CONTROL +"\t");
+driverTarget.get("about:blank");
 
 // Setup prefix field
 var prefix_field = By.id('prefix');
@@ -124,7 +122,7 @@ driverMain.wait(waitForText(output, "Channel calibrated!"), 60000);
 // Start reading
 read.click();
 
-driverMain.wait(timeoutFunction(1000));
+driverMain.wait(timeoutFunction(ramp_time * 1000));
 
 // Open profiling target
 
@@ -139,4 +137,4 @@ driverMain.wait(waitForText(output, "Done readings."), 10000);
 send.click();
 driverMain.wait(waitForText(output, "Done sending"), 10000);
 driverMain.quit();
-
+driverTarget.quit();
