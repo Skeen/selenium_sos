@@ -1,11 +1,16 @@
 #!/bin/bash
 
-BROWSER="chrome"
+if [ "$#" -ne 3 ]; then
+	echo "Expected 3 args: target_file output_name browser"
+	exit
+fi
+TARGETS=$(cat $1)
 
-QUERY_NAME="chrome_event_loop_qry"
-REFNC_NAME="chrome_event_loop_ref"
+QUERY_NAME="${2}_qry"
+REFNC_NAME="${2}__ref"
 
-TARGETS=(http://skeen.website:3001 http://www.au.dk http://www.google.dk http://stroustrup.com http://www.youtube.com)
+
+BROWSER="${3}"
 
 for SITE in ${TARGETS[@]}
 do
