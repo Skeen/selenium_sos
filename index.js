@@ -85,9 +85,12 @@ driverMain.findElement(prefix_field).sendKeys(filename);
 // Setup timeout field
 var timeout_field = By.id('timeout');
 driverMain.wait(until.elementLocated(timeout_field));
-driverMain.findElement(timeout_field).sendKeys(
-        Key.chord(Key.CONTROL, "a"),
-        reading_time);
+var timeout_input = driverMain.findElement(timeout_field);
+timeout_input.sendKeys(Key.CONTROL, "a");
+timeout_input.sendKeys(reading_time);
+//driverMain.findElement(timeout_field).sendKeys(
+//        Key.chord(Key.CONTROL, "a"),
+//        reading_time);
 
 // Find page elements
 var output_field = By.id('output');
