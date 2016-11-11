@@ -6,6 +6,7 @@ var reading_time = 10;
 var ramp_time = 3;
 
 var filename = "_google";
+var timestamp = false;
 
 //console.log("Running Test: " + filename);
 
@@ -82,6 +83,14 @@ driverTarget.get("about:blank");
 var prefix_field = By.id('prefix');
 driverMain.wait(until.elementLocated(prefix_field));
 driverMain.findElement(prefix_field).sendKeys(filename);
+
+if(timestamp)
+{
+	var postfix_box = By.id('postfix');
+	driverMain.wait(until.elementLocated(postfix_box));
+	driverMain.findElement(postfix_box).click();
+}
+
 // Setup timeout field
 var timeout_field = By.id('timeout');
 driverMain.wait(until.elementLocated(timeout_field));
