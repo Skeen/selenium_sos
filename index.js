@@ -1,6 +1,8 @@
 var browser = 'firefox';
 var profiler_host = 'http://localhost:1987';
 var profiler_target = 'http://www.google.dk';
+var pickChannel = null;
+var difficulty = null;
 
 var reading_time = 10;
 var ramp_time = 3;
@@ -17,7 +19,11 @@ var Key = webdriver.Key;
 
 // Take arguments if any
 
-if(process.argv.length === 5)
+if(process.argv.length > 6)
+	difficulty = process.argv[6];
+if(process.argv.length > 5)
+	pickChannel = process.argv[5];
+if(process.argv.length > 4)
 {
 		browser = process.argv[2];
 		profiler_target = process.argv[3];
@@ -83,6 +89,22 @@ driverTarget.get("about:blank");
 var prefix_field = By.id('prefix');
 driverMain.wait(until.elementLocated(prefix_field));
 driverMain.findElement(prefix_field).sendKeys(filename);
+
+if(!pickChannel === null)
+{
+	var channel_pick = By.id("li" + pickChannel);
+	driverMain.wait(until.elementLocated(channel_pick));
+	driverMain.findElement(channel_pick).click();
+}
+
+if(!difficulty === null)
+{
+	var difficulty_field = By.id('difficulty_field');
+	driverMain.wait(until.elementLocated(difficulty_field));
+	var difficulty_input = driverMain.findElement(difficulty_field);
+	difficulty_input.sendKeys(Key.CONTROL, "a");
+	difficulty_input.sendKeys(difficulty);
+}
 
 if(!timestamp)
 {
