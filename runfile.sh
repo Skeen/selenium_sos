@@ -7,7 +7,7 @@ fi
 TARGETS=$(cat $1)
 
 QUERY_NAME="${2}_qry"
-REFNC_NAME="${2}__ref"
+REFNC_NAME="${2}_ref"
 
 
 BROWSER="${3}"

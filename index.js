@@ -84,7 +84,7 @@ var prefix_field = By.id('prefix');
 driverMain.wait(until.elementLocated(prefix_field));
 driverMain.findElement(prefix_field).sendKeys(filename);
 
-if(timestamp)
+if(!timestamp)
 {
 	var postfix_box = By.id('postfix');
 	driverMain.wait(until.elementLocated(postfix_box));
