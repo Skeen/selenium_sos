@@ -4,8 +4,8 @@ var profiler_target = 'http://www.google.dk';
 var pickChannel = null;
 var difficulty = null;
 
-var reading_time = 10;
-var ramp_time = 3;
+var reading_time = 6;
+var ramp_time = 2;
 
 var filename = "_google";
 var timestamp = false;
@@ -90,14 +90,14 @@ var prefix_field = By.id('prefix');
 driverMain.wait(until.elementLocated(prefix_field));
 driverMain.findElement(prefix_field).sendKeys(filename);
 
-if(!pickChannel === null)
+if(!(pickChannel === null))
 {
 	var channel_pick = By.id("li" + pickChannel);
 	driverMain.wait(until.elementLocated(channel_pick));
 	driverMain.findElement(channel_pick).click();
 }
 
-if(!difficulty === null)
+if(!(difficulty === null))
 {
 	var difficulty_field = By.id('difficulty_field');
 	driverMain.wait(until.elementLocated(difficulty_field));
