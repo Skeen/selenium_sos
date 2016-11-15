@@ -169,6 +169,6 @@ driverMain.wait(waitForText(output, "Done readings."), 10000);
 
 // Send results
 send.click();
-driverMain.wait(waitForText(output, "Done sending"), 10000);
+driverMain.wait(waitForText(output, "Done sending."), 10000);
 driverMain.quit();
 driverTarget.quit();
