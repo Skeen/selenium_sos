@@ -3,6 +3,7 @@ var profiler_host = 'http://localhost:1987';
 var profiler_target = 'http://www.google.dk';
 var pickChannel = null;
 var difficulty = null;
+var ambient = false;
 
 var reading_time = 6;
 var ramp_time = 2;
@@ -19,6 +20,8 @@ var Key = webdriver.Key;
 
 // Take arguments if any
 
+if(process.argv.length > 7 && (process.argv[7] > 0))
+	ambient = true;
 if(process.argv.length > 6)
 	difficulty = process.argv[6];
 if(process.argv.length > 5)
@@ -50,7 +53,10 @@ var waitForText = function(wele, text)
 				wele.getText().then( function(value) 
 				{
 					if(value.includes(text))
+					{
+						//console.log("found", text);
 						accept(1);
+					}
 					else
 						setTimeout(helper, 1000);
 				});
@@ -73,6 +79,26 @@ var timeoutFunction = function(timer)
 	};
 };
 
+var open = function(driver, site)
+{
+	driver.get(site).catch(exitWithError);
+};
+
+var exitWithError = function()
+{
+	driverMain.quit().then(
+		function()
+		{
+			driverTarget.quit().then(
+				function()
+				{
+					console.log("Site was hanging:" + profiler_target);
+					console.log("Test script exiting");
+					process.exit(1);
+				})
+		})
+};
+
 var driverMain = new webdriver.Builder()
     .forBrowser(browser)
     .build();
@@ -81,9 +107,17 @@ var driverTarget = new webdriver.Builder()
 	.forBrowser(browser)
 	.build();
 
+// Time to wait for pages to load in ms, before throwing err.
+//  err is caught when using open, and the process exits with 1.
+driverMain.manage().timeouts().pageLoadTimeout(4000);
+driverTarget.manage().timeouts().pageLoadTimeout(4000);
+
 // Setup
-driverMain.get(profiler_host);
-driverTarget.get("about:blank");
+open(driverMain, profiler_host);
+if(ambient)
+	open(driverTarget, profiler_target);
+else
+	open(driverTarget, "about:blank");
 
 // Setup prefix field
 var prefix_field = By.id('prefix');
@@ -97,6 +131,8 @@ if(!(pickChannel === null))
 	driverMain.findElement(channel_pick).click();
 }
 
+// If a difficulty was provided,
+//  us that instead of making a new one.
 if(!(difficulty === null))
 {
 	var difficulty_field = By.id('difficulty_field');
@@ -106,6 +142,8 @@ if(!(difficulty === null))
 	difficulty_input.sendKeys(difficulty);
 }
 
+// If timestamp is not wanted,
+//  unclicks the timestamp box.
 if(!timestamp)
 {
 	var postfix_box = By.id('postfix');
@@ -119,9 +157,6 @@ driverMain.wait(until.elementLocated(timeout_field));
 var timeout_input = driverMain.findElement(timeout_field);
 timeout_input.sendKeys(Key.CONTROL, "a");
 timeout_input.sendKeys(reading_time);
-//driverMain.findElement(timeout_field).sendKeys(
-//        Key.chord(Key.CONTROL, "a"),
-//        reading_time);
 
 // Find page elements
 var output_field = By.id('output');
@@ -135,6 +170,7 @@ driverMain.wait(until.elementLocated(read_button));
 var send_button = By.id('send');
 driverMain.wait(until.elementLocated(send_button));
 
+// Load the page elements for interaction by the webdriver
 var init = driverMain.findElement(init_button);
 var calibrate = driverMain.findElement(calibrate_button);
 var read = driverMain.findElement(read_button);
@@ -142,12 +178,15 @@ var send = driverMain.findElement(send_button);
 var output = driverMain.findElement(output_field)
 var body = driverMain.findElement(By.css("body"));
 
+// Commence the test!
 
 init.click();
 // Check initialization completes
 driverMain.wait(waitForText(output, "Channel initialized!"), 10000);
 
-// Calibrate channel
+// Calibrate channel,
+//  if a calibration was provided,
+//  this will load it rather than making a new one.
 calibrate.click();
 
 // Check calibration completes
@@ -156,11 +195,16 @@ driverMain.wait(waitForText(output, "Channel calibrated!"), 60000);
 // Start reading
 read.click();
 
-driverMain.wait(timeoutFunction(ramp_time * 1000));
-
-// Open profiling target
-
-driverTarget.get(profiler_target);
+// If not an ambient noise test,
+//  this will load the page after waiting for ramp up.
+if(!ambient)
+{
+	driverMain.wait(timeoutFunction(ramp_time * 1000));
+	// Open profiling target
+	// If the reading is supposed to be ambient,
+	//  the page will already be open at this point.
+	open(driverTarget, profiler_target);
+}
 
 // Check that reading completes
 driverMain.wait(timeoutFunction(reading_time *1000));
@@ -170,5 +214,13 @@ driverMain.wait(waitForText(output, "Done readings."), 10000);
 // Send results
 send.click();
 driverMain.wait(waitForText(output, "Done sending."), 10000);
-driverMain.quit();
-driverTarget.quit();
+// Exit orderly with 0
+driverMain.quit().then(
+	function()
+	{
+		driverTarget.quit().then(
+			function()
+			{
+				process.exit(0);
+			})
+	});
