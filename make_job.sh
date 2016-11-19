@@ -20,6 +20,6 @@ for SITE in ${TARGETS[@]}
 do
 	for i in {1..30}
 	do
-	   echo "node index.js $BROWSER ${SITE} \"/${SET_NAME}/${SITE}_${i}\" $CHANNEL $DIFFICULTY"
+        echo "node index.js $BROWSER ${SITE} \"/${SET_NAME}/$(basename ${SITE})_${i}\" $CHANNEL $DIFFICULTY"
 	done
 done
