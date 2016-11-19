@@ -1,5 +1,7 @@
 #!/bin/bash
 
+NAME=$1
+
 while true
 do
 	CMD=$(head -1 $1)
@@ -8,7 +10,6 @@ do
 		exit 0
 	fi
 
-	eval "${CMD}"
-	sleep 1
+	eval "${CMD}" || echo ${CMD} >> ${NAME}.fail
 	sed -i "1d" $1
 done
