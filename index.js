@@ -97,7 +97,7 @@ var exitWithError = function(site, exception)
 				{
 					console.log("Site failed to load:", site);
 					console.log("Error was:");
-					console.log(exception);
+					console.log(exception.message);
 					process.exit(1);
 				})
 		})
