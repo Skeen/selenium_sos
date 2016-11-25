@@ -5,11 +5,14 @@ var pickChannel = null;
 var difficulty = null;
 var ambient = false;
 
-var reading_time = 6;
-var ramp_time = 2;
+var reading_time = 10;
+var ramp_time = 1;
 
 var filename = "_google";
 var timestamp = false;
+
+// Max time to wait for page to load before quitting, in ms.
+var loadTimeout = 10000;
 
 //console.log("Running Test: " + filename);
 
@@ -81,10 +84,10 @@ var timeoutFunction = function(timer)
 
 var open = function(driver, site)
 {
-	driver.get(site).catch(exitWithError);
+	driver.get(site).catch(exitWithError.bind(this,site));
 };
 
-var exitWithError = function()
+var exitWithError = function(site, exception)
 {
 	driverMain.quit().then(
 		function()
@@ -92,8 +95,9 @@ var exitWithError = function()
 			driverTarget.quit().then(
 				function()
 				{
-					console.log("Site was hanging:" + profiler_target);
-					console.log("Test script exiting");
+					console.log("Site failed to load:", site);
+					console.log("Error was:");
+					console.log(exception);
 					process.exit(1);
 				})
 		})
@@ -109,8 +113,8 @@ var driverTarget = new webdriver.Builder()
 
 // Time to wait for pages to load in ms, before throwing err.
 //  err is caught when using open, and the process exits with 1.
-driverMain.manage().timeouts().pageLoadTimeout(4000);
-driverTarget.manage().timeouts().pageLoadTimeout(4000);
+driverMain.manage().timeouts().pageLoadTimeout(loadTimeout);
+driverTarget.manage().timeouts().pageLoadTimeout(loadTimeout);
 
 // Setup
 open(driverMain, profiler_host);
