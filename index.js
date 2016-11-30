@@ -4,6 +4,7 @@ var profiler_target = 'http://www.google.dk';
 var pickChannel = null;
 var difficulty = null;
 var ambient = false;
+var metaDesc = null;
 
 var reading_time = 10;
 var ramp_time = 1;
@@ -23,6 +24,8 @@ var Key = webdriver.Key;
 
 // Take arguments if any
 
+if(process.argv.length > 8)
+	metaDesc = process.argv[8];
 if(process.argv.length > 7 && (process.argv[7] > 0))
 	ambient = true;
 if(process.argv.length > 6)
@@ -162,6 +165,14 @@ var timeout_input = driverMain.findElement(timeout_field);
 timeout_input.sendKeys(Key.CONTROL, "a");
 timeout_input.sendKeys(reading_time);
 
+// Input metadata desc, if provided
+if(metaDesc)
+{
+	var meta_field = By.id('meta');
+	driverMain.wait(until.elementLocated(meta_field));
+	var meta_input = driverMain.findElement(meta_field);
+	meta_input.sendKeys(metaDesc);
+}
 // Find page elements
 var output_field = By.id('output');
 driverMain.wait(until.elementLocated(output_field));
