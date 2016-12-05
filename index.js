@@ -107,7 +107,7 @@ var exitWithError = function(site, exception)
 		})
 };
 
-var buildBrowser = function (browser)
+var buildBrowser = function(browser)
 {
 	if(browser == "firefox-bin")
 	{
@@ -232,7 +232,8 @@ if(!ambient)
 	// Open profiling target
 	// If the reading is supposed to be ambient,
 	//  the page will already be open at this point.
-	open(driverTarget, profiler_target);
+	if(target != "about:blank")
+		open(driverTarget, profiler_target);
 }
 
 // Check that reading completes
