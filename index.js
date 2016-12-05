@@ -18,6 +18,7 @@ var loadTimeout = 10000;
 //console.log("Running Test: " + filename);
 
 var webdriver = require('selenium-webdriver');
+var firefox = require('selenium-webdriver/firefox');
 var By = webdriver.By;
 var until = webdriver.until;
 var Key = webdriver.Key;
@@ -54,7 +55,7 @@ var waitForText = function(wele, text)
 
 		return new Promise(function(accept, reject)
 		{
-			var helper = function()
+		var helper = function()
 			{
 				wele.getText().then( function(value) 
 				{
@@ -106,13 +107,25 @@ var exitWithError = function(site, exception)
 		})
 };
 
-var driverMain = new webdriver.Builder()
-    .forBrowser(browser)
-    .build();
+var buildBrowser = function (browser)
+{
+	if(browser == "firefox-bin")
+	{
+		return new webdriver.Builder()
+			.forBrowser("firefox")
+			.setFirefoxOptions(new firefox.Options().setBinary('firefox-bin'))
+			.build();
+	}
+	else
+	{
+		return new webdriver.Builder()
+			.forBrowser(browser)
+			.build();
+	}
+}
 
-var driverTarget = new webdriver.Builder()
-	.forBrowser(browser)
-	.build();
+var driverMain = buildBrowser(browser);
+var driverTarget = buildBrowser(browser);
 
 // Time to wait for pages to load in ms, before throwing err.
 //  err is caught when using open, and the process exits with 1.
@@ -124,7 +137,8 @@ open(driverMain, profiler_host);
 if(ambient)
 	open(driverTarget, profiler_target);
 else
-	open(driverTarget, "about:blank");
+	//driverTarget.get("about:blank");
+	//open(driverTarget, "about:newtab");
 
 // Setup prefix field
 var prefix_field = By.id('prefix');
