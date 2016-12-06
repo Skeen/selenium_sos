@@ -8,6 +8,8 @@ var pickChannel = null;
 //console.log("Running Test: " + filename);
 
 var webdriver = require('selenium-webdriver');
+var firefox = require('selenium-webdriver/firefox');
+var chrome = require('selenium-webdriver/chrome');
 var By = webdriver.By;
 var until = webdriver.until;
 var Key = webdriver.Key;
@@ -45,9 +47,32 @@ var waitForText = function(wele, text)
 	}
 };
 
-var driverMain = new webdriver.Builder()
-    .forBrowser(browser)
-    .build();
+var buildBrowser = function (browser)
+{
+	if(browser == "firefox-bin")
+	{
+		return new webdriver.Builder()
+			.forBrowser("firefox")
+			.setFirefoxOptions(new firefox.Options().setBinary('firefox-bin'))
+			.build();
+	}	
+	else if(browser == "chrome-bin")
+	{
+		return new webdriver.Builder()
+			.forBrowser("chrome")
+			.setChromeOptions(new chrome.Options().setChromeBinaryPath('/opt/google/chrome/google-chrome'))
+			.build();
+	}
+	else
+	{
+		return new webdriver.Builder()
+			.forBrowser(browser)
+			.build();
+	}
+}
+
+
+var driverMain = buildBrowser(browser);
 
 // Setup
 driverMain.get(profiler_host);

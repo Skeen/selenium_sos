@@ -19,6 +19,7 @@ var loadTimeout = 10000;
 
 var webdriver = require('selenium-webdriver');
 var firefox = require('selenium-webdriver/firefox');
+var chrome = require('selenium-webdriver/chrome');
 var By = webdriver.By;
 var until = webdriver.until;
 var Key = webdriver.Key;
@@ -116,6 +117,13 @@ var buildBrowser = function(browser)
 			.setFirefoxOptions(new firefox.Options().setBinary('firefox-bin'))
 			.build();
 	}
+	else if(browser == "chrome-bin")
+	{
+		return new webdriver.Builder()
+			.forBrowser("chrome")
+			.setChromeOptions(new chrome.Options().setChromeBinaryPath('/opt/google/chrome/google-chrome'))
+			.build();
+	}
 	else
 	{
 		return new webdriver.Builder()
@@ -136,10 +144,13 @@ driverTarget.manage().timeouts().pageLoadTimeout(loadTimeout);
 open(driverMain, profiler_host);
 if(ambient)
 	open(driverTarget, profiler_target);
+// Was commented due to firefox no longer actually having an about:blank page.
+// Browsers still use blank page when first opened by driver. FIX IF THEY DONT
+/*
 else
 	//driverTarget.get("about:blank");
 	//open(driverTarget, "about:newtab");
-
+*/
 // Setup prefix field
 var prefix_field = By.id('prefix');
 driverMain.wait(until.elementLocated(prefix_field));
@@ -232,7 +243,7 @@ if(!ambient)
 	// Open profiling target
 	// If the reading is supposed to be ambient,
 	//  the page will already be open at this point.
-	if(target != "about:blank")
+	if(profiler_target != "about:blank")
 		open(driverTarget, profiler_target);
 }
 
