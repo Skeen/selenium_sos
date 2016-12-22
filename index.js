@@ -5,6 +5,7 @@ var pickChannel = null;
 var difficulty = null;
 var ambient = false;
 var metaDesc = null;
+var random_wait = 0;
 
 var reading_time = 14;
 var ramp_time = 4;
@@ -26,6 +27,11 @@ var Key = webdriver.Key;
 
 // Take arguments if any
 
+if(process.argv.length > 9)
+{
+	var wait_max = process.argv[9];
+	random_wait = getRandomInt(1, wait_max);
+}
 if(process.argv.length > 8)
 	metaDesc = process.argv[8];
 if(process.argv.length > 7 && (process.argv[7] > 0))
@@ -47,6 +53,13 @@ else
 	console.log("Defaulting to: '" + browser + "' '" + profiler_target + "' '" + filename + "'");
 }
 
+
+function getRandomInt(min, max)
+{
+	min = Math.ceil(min);
+	max = Math.floor(max);
+	return Math.floor(Math.random() * (max - min)) + min;
+}
 
 // Return a promise that accepts once element contains text
 var waitForText = function(wele, text)
@@ -234,6 +247,9 @@ calibrate.click();
 
 // Check calibration completes
 driverMain.wait(waitForText(output, "Channel calibrated!"), 60000);
+
+if(random_wait)
+	driverMain.wait(timeoutFunction(random_wait * 1000));
 
 // Start reading
 read.click();
