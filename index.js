@@ -13,7 +13,7 @@ var filename = "_google";
 var timestamp = false;
 
 // Max time to wait for page to load before quitting, in ms.
-var loadTimeout = 10000;
+var loadTimeout = 600000; // Current value means 10 minutes
 
 //console.log("Running Test: " + filename);
 
@@ -144,7 +144,7 @@ driverTarget.manage().timeouts().pageLoadTimeout(loadTimeout);
 open(driverMain, profiler_host);
 if(ambient)
 {
-	driverTarget.manage().timeouts().pageLoadTimeout(loadTimeout*60);
+	driverTarget.manage().timeouts().pageLoadTimeout(loadTimeout);
 	open(driverTarget, profiler_target);
 }
 // Was commented due to firefox no longer actually having an about:blank page.
