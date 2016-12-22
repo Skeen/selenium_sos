@@ -6,8 +6,8 @@ var difficulty = null;
 var ambient = false;
 var metaDesc = null;
 
-var reading_time = 10;
-var ramp_time = 1;
+var reading_time = 14;
+var ramp_time = 4;
 
 var filename = "_google";
 var timestamp = false;
@@ -143,7 +143,10 @@ driverTarget.manage().timeouts().pageLoadTimeout(loadTimeout);
 // Setup
 open(driverMain, profiler_host);
 if(ambient)
+{
+	driverTarget.manage().timeouts().pageLoadTimeout(loadTimeout*60);
 	open(driverTarget, profiler_target);
+}
 // Was commented due to firefox no longer actually having an about:blank page.
 // Browsers still use blank page when first opened by driver. FIX IF THEY DONT
 /*
