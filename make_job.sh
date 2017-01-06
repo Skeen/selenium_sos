@@ -15,6 +15,7 @@ BROWSER="${3}"
 AMBIENT="${5}"
 
 META_DESC=""
+RANDWAIT=""
 
 DIFFICULTY=$(node calibrate.js $BROWSER $CHANNEL)
 
@@ -22,11 +23,14 @@ DIFFICULTY=$(node calibrate.js $BROWSER $CHANNEL)
 if [ "$#" -ge 6 ]; then
 	META_DESC="${6}"
 fi
+if [ "$#" -ge 7 ]; then
+	RANDWAIT="${6}"
+fi
 
 for i in {1..30}
 do
 	for SITE in ${TARGETS[@]}
 	do
-		echo "node index.js $BROWSER ${SITE} \"/${SET_NAME}/$(basename ${SITE})_${i}\" $CHANNEL $DIFFICULTY ${AMBIENT:-0} $META_DESC"
+		echo "node index.js $BROWSER ${SITE} \"/${SET_NAME}/$(basename ${SITE})_${i}\" $CHANNEL $DIFFICULTY ${AMBIENT:-0} $META_DESC $RANDWAIT"
 	done
 done
