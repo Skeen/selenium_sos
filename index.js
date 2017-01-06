@@ -6,6 +6,7 @@ var difficulty = null;
 var ambient = false;
 var metaDesc = null;
 var random_wait = 0;
+var private_browsing = false;
 
 var reading_time = 14;
 var ramp_time = 4;
@@ -27,6 +28,8 @@ var Key = webdriver.Key;
 
 // Take arguments if any
 
+if(process.argv.length > 10 && process.argv[10] > 0)
+	private_browsing = true;
 if(process.argv.length > 9)
 {
 	var wait_max = process.argv[9];
@@ -52,7 +55,6 @@ else
 {
 	console.log("Defaulting to: '" + browser + "' '" + profiler_target + "' '" + filename + "'");
 }
-
 
 function getRandomInt(min, max)
 {
@@ -132,9 +134,13 @@ var buildBrowser = function(browser)
 	}
 	else if(browser == "chrome-bin")
 	{
+		var chrOptions = new chrome.Options().setChromeBinaryPath('/opt/google/chrome/google-chrome');
+		if(private_browsing)
+			chrOptions.addArguments('incognito');
+		
 		return new webdriver.Builder()
 			.forBrowser("chrome")
-			.setChromeOptions(new chrome.Options().setChromeBinaryPath('/opt/google/chrome/google-chrome'))
+			.setChromeOptions(chrOptions)
 			.build();
 	}
 	else
