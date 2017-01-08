@@ -81,7 +81,8 @@ var waitForText = function(wele, text)
 						accept(1);
 					}
 					else
-						setTimeout(helper, 1000);
+						setTimeout(reject.bind(this,0), 1000);
+						//setTimeout(helper, 1000);
 				});
 
 			}
