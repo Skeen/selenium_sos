@@ -68,7 +68,7 @@ var waitForText = function(wele, text)
 {
 	return function()
 	{
-
+		var end = Date.now() + 20000;
 		return new Promise(function(accept, reject)
 		{
 		var helper = function()
@@ -80,9 +80,13 @@ var waitForText = function(wele, text)
 						//console.log("found", text);
 						accept(1);
 					}
+					else if(Date.now() > end)
+					{
+						exitWithError(driverTarget, profiler_target);
+					}
 					else
-						setTimeout(reject.bind(this,0), 1000);
-						//setTimeout(helper, 1000);
+						//setTimeout(reject.bind(this,0), 1000);
+						setTimeout(helper, 1000);
 				});
 
 			}
