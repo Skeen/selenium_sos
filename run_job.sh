@@ -12,4 +12,6 @@ do
 
 	eval "${CMD}" || echo ${CMD} >> ${NAME}.fail
 	sed -i "1d" $1
+	rm "tmp/.com.*" -rf
+	rm "tmp/.org.*" -rf
 done
