@@ -22,6 +22,7 @@ var loadTimeout = 600000; // Current value means 10 minutes
 var webdriver = require('selenium-webdriver');
 var firefox = require('selenium-webdriver/firefox');
 var chrome = require('selenium-webdriver/chrome');
+var proxy = require('selenium-webdriver/proxy');
 var By = webdriver.By;
 var until = webdriver.until;
 var Key = webdriver.Key;
@@ -128,7 +129,7 @@ var exitWithError = function(site, exception)
 		})
 };
 
-var buildBrowser = function(browser)
+var buildBrowser = function(browser, tor)
 {
 	if(browser == "firefox-bin")
 	{
@@ -141,11 +142,19 @@ var buildBrowser = function(browser)
 	{
 		var chrOptions = new chrome.Options().setChromeBinaryPath('/opt/google/chrome/google-chrome');
 		if(private_browsing)
+		{
 			chrOptions.addArguments('incognito');
+			if(tor)
+			{
+				chrOptions.addArguments("proxy-server=socks5://localhost:9050");
+				chrOptions.addArguments("host-resolver-rules=MAP * 0.0.0.0 , EXCLUDE localhost");
+			}
+		}
 		
 		return new webdriver.Builder()
 			.forBrowser("chrome")
 			.setChromeOptions(chrOptions)
+			//.setProxy(proxy.manual({ socks4 : "localhost:9050" }))
 			.build();
 	}
 	else
@@ -156,8 +165,8 @@ var buildBrowser = function(browser)
 	}
 }
 
-var driverMain = buildBrowser(browser);
-var driverTarget = buildBrowser(browser);
+var driverMain = buildBrowser(browser, 0);
+var driverTarget = buildBrowser(browser, 1);
 
 // Time to wait for pages to load in ms, before throwing err.
 //  err is caught when using open, and the process exits with 1.
@@ -286,10 +295,10 @@ driverMain.wait(waitForText(output, "Done readings."), 10000);
 send.click();
 driverMain.wait(waitForText(output, "Done sending."), 10000);
 // Exit orderly with 0
-driverMain.quit().then(
+driverTarget.quit().then(
 	function()
 	{
-		driverTarget.quit().then(
+		driverMain.quit().then(
 			function()
 			{
 				process.exit(0);
